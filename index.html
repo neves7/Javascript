@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+
+    <title>Busca de CEP</title>
+
+
+
+
+<script type="text/javascript" >
+
+
+    // Desabilita o botão de busca enquanto nada é digitado para evitar abirir o moddal sem nenhum resultado
+    $(document).ready(function(){
+        $("#cep").keyup(function(){  
+          $("#busca").attr('disabled',false);
+        }); 
+    });
+    
+    function limpa_formulário_cep() {
+            //Limpa valores do formulário de cep.
+            document.getElementById('rua').value=("");
+            document.getElementById('bairro').value=("");
+            document.getElementById('cidade').value=("");
+            document.getElementById('uf').value=("");
+            document.getElementById('ibge').value=("");
+    }
+
+    function meu_callback(conteudo) {
+        if (!("erro" in conteudo)) {
+            //Atualiza os campos com os valores.
+            document.getElementById('rua').value=(conteudo.logradouro);
+            document.getElementById('bairro').value=(conteudo.bairro);
+            document.getElementById('cidade').value=(conteudo.localidade);
+            document.getElementById('uf').value=(conteudo.uf);
+            document.getElementById('ibge').value=(conteudo.ibge);
+        } //end if.
+        else {
+            //CEP não Encontrado.
+            limpa_formulário_cep();
+            alert("CEP não encontrado.");
+        }
+    }
+        
+     function pesquisacep(valor) {
+
+
+        var cep = valor.replace(/\D/g, '');
+
+            if(cep == "")
+            {
+                if(!document.getElementById('botao').disabled) document.getElementById('botao').disabled=true;              
+            }
+
+        //Verifica se campo cep possui valor informado.
+        if (cep != "") {
+
+            //Expressão regular para validar o CEP.
+            var validacep = /^[0-9]{8}$/;
+
+            //Valida o formato do CEP.
+            if(validacep.test(cep)) {
+
+                //Cria um elemento javascript.
+                var script = document.createElement('script');
+
+                //Sincroniza com o callback.
+                script.src = 'https://viacep.com.br/ws/'+ cep + '/json/?callback=meu_callback';
+
+                //Insere script no documento e carrega o conteúdo.
+                document.body.appendChild(script);
+
+            } //end if.
+            else {
+                //cep é inválido.
+                limpa_formulário_cep();
+                alert("Formato de CEP inválido.");
+            }
+        } //end if.
+        else {
+            //cep sem valor, limpa formulário.
+            limpa_formulário_cep();
+        }
+    };
+
+    </script>
+
+
+
+
+  </head>
+
+
+
+
+  <body>
+
+
+<!-- ********************** CSS *****************************-->
+    <style type="text/css">
+      body{background-color: #446e9a !important;}
+      .caixa{padding: 11px !important;}
+      .btn:not(:disabled):not(.disabled) {cursor: pointer; width: 100%; margin-top: -20px;}
+      .card{padding: 40px; margin-top: 250px;background-color: #d3e2f5;}
+      .form-group {margin-bottom: 0;}
+      .modal-content{margin-top: 165px;}
+      .btn-primary.disabled, .btn-primary:disabled {color: #fff;background-color: #007bff;border-color: #007bff;width: 100%; margin-top: -20px;}
+    </style>
+
+<!-- ********************** FIM CSS *****************************-->   
+
+
+
+
+
+<div class="container">
+  <div class="row">
+
+        <div class="col-md-4"></div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                
+                    <h2 class="text-center" style="margin-bottom: 20px;">Busca de CEP</h2>
+                    <div class="form-group">
+                        <input name="cep" type="text" class="form-control caixa" id="cep" value="" size="10" maxlength="9" placeholder="Digite seu CEP" onblur="pesquisacep(this.value);" /></label><br />
+                    </div>     
+
+                    <div class="form-group" name="botao" id="botao">
+                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal" id="busca" nome="busca" disabled >Buscar CEP</button>
+                    </div> 
+
+            </div>
+        </div>
+
+        <div class="col-md-4"></div>
+
+    </div>
+ </div>     
+
+
+
+
+
+
+
+<!-- ---------------------------- MODAL COM RESULTADOS --------------------------- -->
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title text-center" id="myModalLabel">Resultado da Busca</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        
+      </div>
+
+
+
+      <div class="modal-body">
+     
+        <div class="form-group">
+        <label>Rua:
+        <input name="rua" type="text" class="form-control" id="rua" size="60" /></label><br />
+        </div>
+
+        <div class="form-group">
+        <label>Bairro:
+        <input name="bairro" type="text" class="form-control" id="bairro" size="40" /></label><br />
+        </div>
+
+
+        <div class="form-group">
+        <label>Cidade:
+        <input name="cidade" type="text" class="form-control" id="cidade" size="40" /></label><br />
+        </div>
+
+
+        <div class="form-group">
+        <label>Estado:
+        <input name="uf" type="text" class="form-control" id="uf" size="2" /></label><br />
+        </div>
+
+        <div class="form-group">
+        <label>IBGE:
+        <input name="ibge" type="text" class="form-control" id="ibge" size="8" /></label><br />
+      </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+<!-- ---------------------------- FIM MODAL COM RESULTADOS --------------------------- -->
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em" crossorigin="anonymous"></script>
+  </body>
+</html>
+
